@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Basic Three.js App</title>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+      #view1 {
+      	position: fixed;
+      	display: block;
+      	padding: 15px 25px;
+      	background: #666666;
+      	bottom: 50px;
+      	left: 50px;
+      	cursor: pointer;
+      }
+      #view2 {
+      	position: fixed;
+      	display: block;
+      	padding: 15px 25px;
+      	background: #666666;
+      	bottom: 50px;
+      	left: 150px;
+      	cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+  	<div id="view1" onclick="TweenMax.to(camera.position,0.5,{x:50,y:150,z:100});">View 1</div>
+  	<div id="view2" onclick="TweenMax.to(camera.position,0.5,{x:-25,y:80,z:50});">View 2</div>
+
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.2/TweenMax.min.js"></script>
+    <script src="three.min.js"></script>
+    <script src="OrbitControls.js"></script>
+    <script src="FlyControls.js"></script>
+    <script src="ColladaLoader.js"></script>
+    <script>
+
+		// var clock = new THREE.Clock();
+
+  //     	var scene = new THREE.Scene();
+		// var aspect = window.innerWidth / window.innerHeight;
+		// var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 15000 );
+
+		// 		var controls = new THREE.FlyControls( camera );
+		// 		controls.movementSpeed = 10;
+		// 		controls.rollSpeed = Math.PI / 10;
+
+
+		// var renderer = new THREE.WebGLRenderer();
+		// renderer.setSize( window.innerWidth, window.innerHeight );
+		// document.body.appendChild( renderer.domElement );
+
+		// var geometry = new THREE.SphereGeometry( 6, 24, 16 );
+		// var material = new THREE.MeshBasicMaterial({
+		// 	color: 0xaaaaaa,
+		// 	wireframe: true
+		// });
+
+		// var cube = new THREE.Mesh( geometry, material );
+		// scene.add( cube );
+		// camera.position.z = 20;
+
+		// var render = function () {
+			
+		// 	requestAnimationFrame( render );
+
+		// 	controls.update( clock.getDelta() );
+		// 	cube.rotation.x += 0.01;
+		// 	cube.rotation.y += 0.01;
+		// 	renderer.render( scene, camera );
+		// };
+
+		// render();
+	var clock = new THREE.Clock();	
+var scene, camera, renderer, cube;
+
+    init();
+    animate();
+
+    function init() {
+
+      scene = new THREE.Scene();
+      var WIDTH = window.innerWidth,
+          HEIGHT = window.innerHeight;
+
+      renderer = new THREE.WebGLRenderer({antialias:true});
+      renderer.setSize(WIDTH, HEIGHT);
+      document.body.appendChild(renderer.domElement);
+
+      camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 100000);
+      camera.position.set(50,150,100);
+      scene.add(camera);
+
+      window.addEventListener('resize', function() {
+        var WIDTH = window.innerWidth,
+            HEIGHT = window.innerHeight;
+        renderer.setSize(WIDTH, HEIGHT);
+        camera.aspect = WIDTH / HEIGHT;
+        camera.updateProjectionMatrix();
+      });
+
+      var light = new THREE.PointLight(0xfffff3, 0.8);
+      light.position.set(-100,100,100);
+      scene.add(light);
+
+		var sphereSize = 1; 
+		var pointLightHelper = new THREE.PointLightHelper( light, sphereSize ); 
+		scene.add( pointLightHelper );
+
+      var light2 = new THREE.PointLight(0xd7f0ff, 0.2);
+      light2.position.set(200,100,200);
+      scene.add(light2);
+
+		var sphereSize = 1; 
+		var pointLightHelper2 = new THREE.PointLightHelper( light2, sphereSize ); 
+		scene.add( pointLightHelper2 );
+
+	  var light3 = new THREE.PointLight(0xFFFFFF, 0.5);
+      light3.position.set(250,100,-100);
+      scene.add(light3);
+
+		var sphereSize = 1; 
+		var pointLightHelper3 = new THREE.PointLightHelper( light3, sphereSize ); 
+		scene.add( pointLightHelper3 );
+
+  var loader = new THREE.ColladaLoader();
+
+  loader.options.convertUpAxis = true;
+
+  loader.load( 'tanker.dae', function ( collada ) {
+ //dummy1.dae
+
+    var dae = collada.scene;
+
+    var skin = collada.skins[ 0 ];
+
+dae.position.set(-80,0,0);//x,z,y- if you think in blender dimensions ;)
+dae.scale.set(0.01,0.01,0.01);
+
+scene.add(dae);
+
+		var geometry = new THREE.SphereGeometry( 6, 24, 16 );
+		var material = new THREE.MeshBasicMaterial({
+			color: 0xaaaaaa,
+			wireframe: true
+		});
+
+		cube = new THREE.Mesh( geometry, material );
+		cube.position.set(-9, 19, -16);
+		
+		scene.add( cube );
+
+      });
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    }
+   	  
+    function animate() {
+
+      requestAnimationFrame(animate);
+      controls.update( clock.getDelta() );
+cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+	  renderer.setClearColor( 0x222222, 1);
+      renderer.render(scene, camera);
+      controls.update();
+
+    }
+
+    </script>
+  </body>
+</html>
